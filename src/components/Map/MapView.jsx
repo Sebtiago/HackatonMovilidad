@@ -39,19 +39,19 @@ const MapView = ({ incidents }) => {
           // Definir íconos para los diferentes tipos de incidencias
           switch (incident.type) {
             case 'Evento':
-              icon = 'https://img.icons8.com/color/48/000000/event.png';
+              icon = 'https://img.icons8.com/?size=20&id=yHeF9urVx2aM&format=png&color=000000';
               break;
             case 'Accidente/Emergencia':
-              icon = 'https://img.icons8.com/color/48/000000/car-crash.png';
+              icon = 'https://img.icons8.com/?size=20&id=SLx9kZV_N4bX&format=png&color=000000';
               break;
             case 'Obras/Mantenimiento':
-              icon = 'https://img.icons8.com/color/48/000000/road-worker.png';
+              icon = 'https://img.icons8.com/?size=20&id=IehwIxC2RfhW&format=png&color=000000';
               break;
             case 'Restricción':
-              icon = 'https://img.icons8.com/color/48/000000/no-entry.png';
+              icon = 'https://img.icons8.com/?size=20&id=bVi0CgNVrmmc&format=png&color=000000';
               break;
             default:
-              icon = undefined;
+              icon = 'https://img.icons8.com/?size=20&id=Ju3Ck2nsKKej&format=png&color=000000';
           }
 
           new window.google.maps.Marker({

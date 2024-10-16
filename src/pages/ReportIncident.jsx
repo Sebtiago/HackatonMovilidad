@@ -16,10 +16,12 @@ const ReportIncident = () => {
   const [currentLocation, setCurrentLocation] = useState({ lat: 4.142, lng: -73.626 });
   const [address, setAddress] = useState('');
 
+  // Cargar la API de Google Maps
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
+  // Obtener la ubicación actual del usuario
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -34,6 +36,7 @@ const ReportIncident = () => {
     }
   }, []);
 
+  // Obtener la dirección a partir de la latitud y longitud
   const fetchAddress = async (lat, lng) => {
     try {
       const response = await fetch(
@@ -48,6 +51,7 @@ const ReportIncident = () => {
     }
   };
 
+  // Manejar clic en el mapa para colocar el marcador
   const handleMapClick = (event) => {
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
@@ -55,6 +59,7 @@ const ReportIncident = () => {
     fetchAddress(lat, lng);
   };
 
+  // Usar GPS para actualizar la ubicación
   const handleGpsClick = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -69,6 +74,7 @@ const ReportIncident = () => {
     }
   };
 
+  // Enviar el reporte de incidencia
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedIncident || !markerPosition) {
@@ -83,17 +89,18 @@ const ReportIncident = () => {
           longitude: markerPosition.lng,
         },
         address,
-        user: currentUser.email,
-        severity: 1, // Default severity, can be updated based on further input
+        user: currentUser?.email || 'Anónimo',
+        severity: 1, // Default severity, puede actualizarse si es necesario
         status: 'pending',
         createdAt: serverTimestamp(),
       });
-      navigate('/home');
+      navigate('/');
     } catch (error) {
       console.error('Error al reportar la incidencia:', error);
     }
   };
 
+  // Mostrar mapa cargando
   if (!isLoaded) return <div>Cargando mapa...</div>;
 
   return (
@@ -107,34 +114,23 @@ const ReportIncident = () => {
       <div className="w-full max-w-lg bg-white rounded-md shadow-md p-6 mb-6">
         <h2 className="text-xl font-bold text-primary mb-4">Selecciona el tipo de incidencia</h2>
         <div className="flex justify-around space-x-2">
-          <button
-            className={`p-4 w-1/4 rounded-lg ${selectedIncident === 'Evento' ? 'bg-primary text-white' : 'bg-gray-200'}`}
-            onClick={() => setSelectedIncident('Evento')}
-          >
-            <MdEvent size={42} className='mx-auto'/>
-            <p>Evento</p>
-          </button>
-          <button
-            className={`p-4 w-1/4 rounded-lg ${selectedIncident === 'Accidente/Emergencia' ? 'bg-primary text-white' : 'bg-gray-200'}`}
-            onClick={() => setSelectedIncident('Accidente/Emergencia')}
-          >
-            <MdReportProblem size={42} className='mx-auto' />
-            <p>Accidente</p>
-          </button>
-          <button
-            className={`p-4 w-1/4 rounded-lg ${selectedIncident === 'Obras/Mantenimiento' ? 'bg-primary text-white' : 'bg-gray-200'}`}
-            onClick={() => setSelectedIncident('Obras/Mantenimiento')}
-          >
-            <MdConstruction size={42} className='mx-auto' />
-            <p>Obras</p>
-          </button>
-          <button
-            className={`p-4 w-1/4 rounded-lg ${selectedIncident === 'Restricción' ? 'bg-primary text-white' : 'bg-gray-200'}`}
-            onClick={() => setSelectedIncident('Restricción')}
-          >
-            <MdBlock size={42} className='mx-auto' />
-            <p>Restricción</p>
-          </button>
+          {[
+            { type: 'Evento', icon: <MdEvent size={42} /> },
+            { type: 'Accidente/Emergencia', icon: <MdReportProblem size={42} /> },
+            { type: 'Obras/Mantenimiento', icon: <MdConstruction size={42} /> },
+            { type: 'Restricción', icon: <MdBlock size={42} /> },
+          ].map(({ type, icon }) => (
+            <button
+              key={type}
+              className={`p-4 w-1/4 rounded-lg ${
+                selectedIncident === type ? 'bg-primary text-white' : 'bg-gray-200'
+              }`}
+              onClick={() => setSelectedIncident(type)}
+            >
+              {icon}
+              <p>{type}</p>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -160,7 +156,7 @@ const ReportIncident = () => {
           onClick={handleGpsClick}
           className="flex items-center space-x-2 w-16 h-16 border-primary bg-gray-200 text-primary rounded-md p-2 font-bold hover:bg-primary transition duration-200 hover:text-gray-200"
         >
-          <MdGpsFixed size={32} className='m-auto'/>
+          <MdGpsFixed size={32} className="m-auto" />
         </button>
       </div>
 

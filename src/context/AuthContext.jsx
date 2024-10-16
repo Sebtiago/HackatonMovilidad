@@ -1,37 +1,44 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '../services/firebaseConfig';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 
-// Creamos el contexto de autenticación
+// Crear el contexto de autenticación
 const AuthContext = createContext();
 
-// Proveedor del contexto de autenticación
-export function AuthProvider({ children }) {
+// Proveedor de autenticación
+export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Escuchamos los cambios de estado de autenticación
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
     });
 
-    // Cleanup del listener
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
 
   // Función para iniciar sesión
-  function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
+  const login = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      throw error;
+    }
+  };
 
   // Función para cerrar sesión
-  function logout() {
-    return signOut(auth);
-  }
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
 
-  // Valores disponibles en el contexto
   const value = {
     currentUser,
     login,
@@ -43,9 +50,11 @@ export function AuthProvider({ children }) {
       {!loading && children}
     </AuthContext.Provider>
   );
-}
+};
 
-// Hook para utilizar el contexto de autenticación
-export function useAuth() {
+// Hook personalizado para usar el contexto de autenticación
+export const useAuth = () => {
   return useContext(AuthContext);
-}
+};
+
+export default AuthProvider;

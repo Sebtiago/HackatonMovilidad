@@ -1,23 +1,22 @@
-// src/Hooks/useFetchIncidents.jsx
+// src/Hooks/useIncidents.jsx
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../services/firebaseConfig';
+import { getDocs } from 'firebase/firestore';
+import { incidentsCollection } from '../services/firebaseConfig';
 
-// Utiliza un named export para que podamos importar correctamente
-export const useFetchIncidents = () => {
+const useIncidents = () => {
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchIncidents = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'incidents'));
-        const incidentsData = querySnapshot.docs.map((doc) => ({
+        const snapshot = await getDocs(incidentsCollection);
+        const incidentsList = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setIncidents(incidentsData);
+        setIncidents(incidentsList);
       } catch (error) {
         console.error('Error fetching incidents:', error);
       } finally {
@@ -30,3 +29,5 @@ export const useFetchIncidents = () => {
 
   return { incidents, loading };
 };
+
+export default useIncidents;

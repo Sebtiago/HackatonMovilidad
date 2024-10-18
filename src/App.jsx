@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Home from './pages/Home';
 import Login from './pages/Login';
 import ReportIncident from './pages/ReportIncident';
-import MapView from './components/Map/MapView';
+import CitizenView from './pages/CitizenView';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -16,8 +16,8 @@ const App = () => {
           {/* Ruta de Login */}
           <Route path="/login" element={<Login />} />
 
-          {/* Ruta Pública para Ver el Mapa */}
-          <Route path="/view" element={<MapView />} />
+          {/* Ruta Pública para Ver la Página de Ciudadanos */}
+          <Route path="/mapa" element={<CitizenView />} />
 
           {/* Ruta Privada para Reportar una Incidencia */}
           <Route

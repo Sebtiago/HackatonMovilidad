@@ -106,67 +106,87 @@ const ReportIncident = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center px-4 py-6">
       {/* Header */}
-      <header className="w-full max-w-lg rounded-md shadow-md p-4 flex items-center justify-center mb-6 bg-primary">
-        <h1 className="text-2xl font-semibold text-white">Reportar Incidencia</h1>
+      <header className="w-full max-w-lg rounded-md p-2 flex items-center justify-center mb-2">
+        <h1 className="text-2xl font-extrabold text-primary">Reportar Incidencia</h1>
       </header>
 
       {/* Tipo de Incidencia */}
       <div className="w-full max-w-lg bg-white rounded-md shadow-md p-6 mb-6">
-        <h2 className="text-xl font-bold text-primary mb-4">Selecciona el tipo de incidencia</h2>
-        <div className="flex justify-around space-x-2">
+        <h2 className="text-xl font-bold text-secondary text-center mb-4">Selecciona el tipo de incidencia</h2>
+        <div className="flex justify-around space-x-2 w-full">
           {[
             { type: 'Evento', icon: <MdEvent size={42} /> },
-            { type: 'Accidente/Emergencia', icon: <MdReportProblem size={42} /> },
-            { type: 'Obras/Mantenimiento', icon: <MdConstruction size={42} /> },
+            { type: 'Accidente', icon: <MdReportProblem size={42} /> },
+            { type: 'Obras', icon: <MdConstruction size={42} /> },
             { type: 'Restricción', icon: <MdBlock size={42} /> },
           ].map(({ type, icon }) => (
             <button
               key={type}
-              className={`p-4 w-1/4 rounded-lg ${
+              className={`flex flex-col items-center p-4 w-1/4 rounded-lg hover:bg-primary hover:text-white ${
                 selectedIncident === type ? 'bg-primary text-white' : 'bg-gray-200'
               }`}
               onClick={() => setSelectedIncident(type)}
             >
               {icon}
-              <p>{type}</p>
+              <p className="mt-2">{type}</p>
             </button>
           ))}
         </div>
       </div>
 
       {/* Mapa */}
-      <div className="w-full max-w-lg h-80 mb-6">
-        <GoogleMap
-          center={currentLocation}
-          zoom={15}
-          mapContainerStyle={{ width: '100%', height: '100%' }}
-          onClick={handleMapClick}
-        >
-          {markerPosition && <Marker position={markerPosition} />}
-        </GoogleMap>
+      <div className="">
+        <div className="w-[90%] lg:w-screen max-w-lg h-80 mb-6 rounded-lg mx-auto">
+          <GoogleMap
+            center={currentLocation}
+            zoom={15}
+            mapContainerStyle={{ width: '100%', height: '100%' }}
+            onClick={handleMapClick}
+            options={{
+              disableDefaultUI: true, // Desactiva la UI de Google Maps
+              clickableIcons: false, // Desactiva la capacidad de hacer clic en POIs como tiendas y restaurantes
+              styles: [
+                {
+                  featureType: 'poi',
+                  elementType: 'labels',
+                },
+              ],
+            }}
+          >
+            {markerPosition && <Marker position={markerPosition} />}
+          </GoogleMap>
+        </div>
+
+        {/* Dirección */}
+        <div className="w-screen max-w-lg bg-white rounded-md p-2 lg:p-6 mb-2 flex justify-between border border-primary">
+          <div>
+            <h2 className="text-xl font-bold text-primary mb-2">Dirección seleccionada</h2>
+            <p className="text-secondary mb-4 overflow-hidden">{address}</p>
+          </div>
+          <button
+            onClick={handleGpsClick}
+            className="flex items-center space-x-2 w-16 h-16 border-primary bg-gray-200 text-primary rounded-md p-2 font-bold hover:bg-primary transition duration-200 hover:text-gray-200"
+          >
+            <MdGpsFixed size={32} className="m-auto" />
+          </button>
+        </div>
       </div>
 
-      {/* Dirección */}
-      <div className="w-full max-w-lg bg-white rounded-md shadow-md p-6 mb-6 flex justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-primary mb-2">Dirección seleccionada</h2>
-          <p className="text-secondary mb-4">{address}</p>
-        </div>
+      {/* Botones de Enviar y Cancelar */}
+      <div className="w-full max-w-lg flex flex-col-reverse lg:flex-row lg:space-x-2">
         <button
-          onClick={handleGpsClick}
-          className="flex items-center space-x-2 w-16 h-16 border-primary bg-gray-200 text-primary rounded-md p-2 font-bold hover:bg-primary transition duration-200 hover:text-gray-200"
+          onClick={() => navigate('/')}
+          className="w-full bg-white text-error hover:bg-error rounded-md p-4 font-bold border border-error hover:text-white transition duration-200"
         >
-          <MdGpsFixed size={32} className="m-auto" />
+          Cancelar
+        </button>
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-secondary text-white rounded-md p-4 font-bold hover:bg-secondary-dark transition duration-200 mb-4 lg:mb-0"
+        >
+          Reportar incidencia
         </button>
       </div>
-
-      {/* Botón de Enviar */}
-      <button
-        onClick={handleSubmit}
-        className="w-full max-w-lg bg-secondary text-white rounded-md p-4 font-bold hover:bg-secondary-dark transition duration-200"
-      >
-        Reportar Incidencia
-      </button>
     </div>
   );
 };

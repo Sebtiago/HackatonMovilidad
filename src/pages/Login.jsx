@@ -86,7 +86,18 @@ const Login = () => {
               Soporte Técnico
             </a>
           </p>
+          <div>
+          <p className="text-center text-xs text-gray-500 my-4">O visualiza el mapa de la ciudad sin inciar sessión</p>
+          <button
+          onClick={() => navigate('/mapa')}
+          className="w-full bg-white text-secondary hover:bg-secondary-dark rounded-md p-4 font-bold border border-secondary hover:text-white transition duration-200"
+        >
+          Mapa movilidad Villaviencio
+        </button>
+          </div>
+
         </div>
+        
       </div>
     </div>
   );
